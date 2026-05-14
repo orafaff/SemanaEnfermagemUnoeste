@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Semana da Enfermagem – Registro de Presença</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green-deep: #0a4a3a;
+      --green-mid: #1a7a5e;
+      --green-light: #2aaa82;
+      --cream: #f5f0e8;
+      --cream-dark: #e8e0d0;
+      --white: #ffffff;
+      --text-dark: #1a1a1a;
+      --text-muted: #5a6a62;
+      --error: #c0392b;
+      --success: #1a7a5e;
+      --gold: #c9a84c;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--green-deep);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Background texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(42,170,130,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 90%, rgba(26,122,94,0.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Decorative cross pattern */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 48px, rgba(255,255,255,0.03) 48px, rgba(255,255,255,0.03) 50px),
+        repeating-linear-gradient(90deg, transparent, transparent 48px, rgba(255,255,255,0.03) 48px, rgba(255,255,255,0.03) 50px);
+      pointer-events: none;
+    }
+
+    .page-wrapper {
+      width: 100%;
+      max-width: 520px;
+      padding: 24px 16px;
+      position: relative;
+      z-index: 1;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .cross-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      background: var(--gold);
+      border-radius: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 20px rgba(201,168,76,0.4);
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 4px 20px rgba(201,168,76,0.4); }
+      50%       { box-shadow: 0 4px 32px rgba(201,168,76,0.7); }
+    }
+
+    .cross-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--green-deep);
+    }
+
+    .event-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--cream);
+      letter-spacing: -0.5px;
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+
+    .event-title span {
+      color: var(--gold);
+    }
+
+    .event-date {
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(245,240,232,0.55);
+      margin-top: 4px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--cream);
+      border-radius: 24px;
+      padding: 36px 32px 32px;
+      box-shadow:
+        0 2px 0 rgba(255,255,255,0.12) inset,
+        0 24px 60px rgba(0,0,0,0.35);
+    }
+
+    .card-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--green-deep);
+      margin-bottom: 4px;
+    }
+
+    .card-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      font-weight: 400;
+    }
+
+    /* ── Form ── */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 7px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 13px 16px;
+      border: 2px solid var(--cream-dark);
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.97rem;
+      color: var(--text-dark);
+      background: var(--white);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--green-light);
+      box-shadow: 0 0 0 3px rgba(42,170,130,0.15);
+    }
+
+    input[type="text"]::placeholder {
+      color: #b0bdb8;
+    }
+
+    /* ── Termo ── */
+    .termo-box {
+      background: rgba(26,122,94,0.07);
+      border: 1.5px solid rgba(26,122,94,0.2);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+    }
+
+    .termo-box p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .termo-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 22px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .termo-check input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      accent-color: var(--green-mid);
+      cursor: pointer;
+      margin-top: 1px;
+    }
+
+    .termo-check span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ── Button ── */
+    .btn-registrar {
+      width: 100%;
+      padding: 15px;
+      background: var(--green-deep);
+      color: var(--cream);
+      border: none;
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-registrar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.07), transparent);
+    }
+
+    .btn-registrar:hover:not(:disabled) {
+      background: var(--green-mid);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(26,122,94,0.4);
+    }
+
+    .btn-registrar:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-registrar:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    /* ── Status messages ── */
+    .status {
+      margin-top: 16px;
+      padding: 13px 16px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: none;
+      line-height: 1.5;
+    }
+
+    .status.error {
+      background: rgba(192,57,43,0.1);
+      border: 1.5px solid rgba(192,57,43,0.3);
+      color: var(--error);
+      display: block;
+    }
+
+    .status.success {
+      background: rgba(26,122,94,0.1);
+      border: 1.5px solid rgba(26,122,94,0.3);
+      color: var(--success);
+      display: block;
+    }
+
+    .status.info {
+      background: rgba(201,168,76,0.1);
+      border: 1.5px solid rgba(201,168,76,0.35);
+      color: #7a5e10;
+      display: block;
+    }
+
+    /* ── Loader ── */
+    .loader {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(245,240,232,0.4);
+      border-top-color: var(--cream);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.72rem;
+      color: rgba(245,240,232,0.3);
+      letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 420px) {
+      .card { padding: 28px 20px 24px; }
+      .event-title { font-size: 1.65rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="cross-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19 11h-6V5a1 1 0 0 0-2 0v6H5a1 1 0 0 0 0 2h6v6a1 1 0 0 0 2 0v-6h6a1 1 0 0 0 0-2z"/>
+      </svg>
+    </div>
+    <h1 class="event-title">Semana da<br /><span>Enfermagem</span></h1>
+    <p class="event-date" id="dataHoje"></p>
+  </div>
+
+  <!-- Card -->
+  <div class="card">
+    <h2 class="card-heading">Registrar Presença</h2>
+    <p class="card-sub">Preencha os campos abaixo para confirmar sua presença no evento.</p>
+
+    <div class="form-group">
+      <label for="nome">Nome Completo</label>
+      <input type="text" id="nome" placeholder="Seu nome completo" autocomplete="name" />
+    </div>
+
+    <div class="form-group">
+      <label for="ra">RA Acadêmico</label>
+      <input type="text" id="ra" placeholder="Ex: 123456" autocomplete="off" />
+    </div>
+
+    <div class="termo-box">
+      <p>
+        Ao registrar sua presença, confirmo que estou <strong>fisicamente presente</strong> no local do evento e autorizo o armazenamento dos meus dados (nome e RA) para fins de controle acadêmico de frequência.
+      </p>
+    </div>
+
+    <label class="termo-check">
+      <input type="checkbox" id="termo" />
+      <span>Li e aceito os termos acima e confirmo minha presença no local.</span>
+    </label>
+
+    <button class="btn-registrar" id="btnRegistrar" onclick="registrarPresenca()">
+      Confirmar Presença
+    </button>
+
+    <div class="status" id="statusMsg"></div>
+  </div>
+
+  <p class="footer">Controle de presença · Semana da Enfermagem</p>
+</div>
+
+<script>
+  // ── Configurações ──────────────────────────────────────────
+  const SHEETDB_URL = 'https://sheetdb.io/api/v1/ez3gssl2tczv8'; // ← substitua pelo seu endpoint SheetDB
+  const EVENTO_LAT  = -22.1330694;
+  const EVENTO_LNG  = -51.4028245;
+  const RAIO_METROS = 150;       // raio permitido em metros
+  const COOLDOWN_MS = 60 * 60 * 1000; // 1 hora em ms
+
+  // ── Data de hoje ──────────────────────────────────────────
+  const dataHoje = new Date().toLocaleDateString('pt-BR', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+  });
+  document.getElementById('dataHoje').textContent = dataHoje;
+
+  // ── Helpers ───────────────────────────────────────────────
+  function showStatus(msg, tipo) {
+    const el = document.getElementById('statusMsg');
+    el.textContent = msg;
+    el.className = 'status ' + tipo;
+  }
+
+  function calcDistancia(lat1, lng1, lat2, lng2) {
+    const R = 6371000; // raio da Terra em metros
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 +
+              Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+              Math.sin(dLng/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  function getDeviceId() {
+    let id = localStorage.getItem('device_id');
+    if (!id) {
+      id = 'dev_' + Math.random().toString(36).slice(2) + Date.now();
+      localStorage.setItem('device_id', id);
+    }
+    return id;
+  }
+
+  function verificarCooldown(ra) {
+    const chave = 'registro_ra_' + ra;
+    const ultimo = localStorage.getItem(chave);
+    if (!ultimo) return false;
+    return (Date.now() - parseInt(ultimo)) < COOLDOWN_MS;
+  }
+
+  function salvarCooldown(ra) {
+    localStorage.setItem('registro_ra_' + ra, Date.now().toString());
+  }
+
+  // ── Registro ─────────────────────────────────────────────
+  async function registrarPresenca() {
+    const nome  = document.getElementById('nome').value.trim();
+    const ra    = document.getElementById('ra').value.trim();
+    const termo = document.getElementById('termo').checked;
+    const btn   = document.getElementById('btnRegistrar');
+
+    // Validações básicas
+    if (!nome || !ra) {
+      showStatus('⚠️ Preencha nome e RA antes de continuar.', 'error');
+      return;
+    }
+    if (!termo) {
+      showStatus('⚠️ Você precisa aceitar o termo de presença.', 'error');
+      return;
+    }
+
+    // Cooldown por RA
+    if (verificarCooldown(ra)) {
+      showStatus('⏳ Este RA já foi registrado neste dispositivo. Aguarde 1 hora para tentar novamente.', 'error');
+      return;
+    }
+
+    // UI: loading
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader"></span> Verificando localização…';
+    showStatus('📍 Obtendo sua localização…', 'info');
+
+    // Geolocalização
+    if (!navigator.geolocation) {
+      showStatus('❌ Seu navegador não suporta geolocalização. Use outro dispositivo.', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Confirmar Presença';
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        const dist = calcDistancia(latitude, longitude, EVENTO_LAT, EVENTO_LNG);
+
+        if (dist > RAIO_METROS) {
+          showStatus(`❌ Você está a ${Math.round(dist)} m do local do evento. Presença permitida apenas dentro de ${RAIO_METROS} m.`, 'error');
+          btn.disabled = false;
+          btn.textContent = 'Confirmar Presença';
+          return;
+        }
+
+        // Enviar para SheetDB
+        btn.innerHTML = '<span class="loader"></span> Registrando…';
+        showStatus('📤 Enviando dados…', 'info');
+
+        const agora = new Date().toLocaleString('pt-BR');
+        const deviceId = getDeviceId();
+
+        try {
+          const resp = await fetch(SHEETDB_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              data: {
+                nome:      nome,
+                ra:        ra,
+                data_hora: agora,
+                latitude:  latitude.toFixed(6),
+                longitude: longitude.toFixed(6),
+                device_id: deviceId
+              }
+            })
+          });
+
+          if (!resp.ok) throw new Error('Erro ao enviar dados: ' + resp.status);
+
+          salvarCooldown(ra);
+          showStatus('✅ Presença registrada com sucesso! Obrigado, ' + nome.split(' ')[0] + '.', 'success');
+          document.getElementById('nome').value = '';
+          document.getElementById('ra').value   = '';
+          document.getElementById('termo').checked = false;
+
+        } catch (err) {
+          showStatus('❌ Falha ao registrar. Verifique sua conexão e tente novamente.', 'error');
+          console.error(err);
+        }
+
+        btn.disabled = false;
+        btn.textContent = 'Confirmar Presença';
+      },
+      (err) => {
+        let msg = '❌ Não foi possível obter sua localização.';
+        if (err.code === 1) msg = '❌ Permissão de localização negada. Ative o GPS e permita o acesso.';
+        if (err.code === 2) msg = '❌ Localização indisponível. Verifique o GPS do dispositivo.';
+        if (err.code === 3) msg = '❌ Tempo esgotado ao obter localização. Tente novamente.';
+        showStatus(msg, 'error');
+        btn.disabled = false;
+        btn.textContent = 'Confirmar Presença';
+      },
+      { timeout: 12000, maximumAge: 0, enableHighAccuracy: true }
+    );
+  }
+</script>
+</body>
+</html>
