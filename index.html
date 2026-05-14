@@ -554,8 +554,6 @@
 </head>
 <body>
 
-<!-- ════════════════ PÁGINA ════════════════ -->
-
 <div class="page-wrapper">
 
   <div class="header">
@@ -616,12 +614,9 @@
   </p>
 </div>
 
-<!-- ════════════════ ADMINISTRAÇÃO ════════════════ -->
-
 <div class="admin-overlay" id="adminOverlay">
   <div class="admin-card">
 
-    <!-- login -->
     <div class="admin-section active" id="secLogin">
       <p class="admin-title">Área do Administrador</p>
       <p class="admin-sub">Insira a palavra-passe para gerir a lista de presenças.</p>
@@ -637,7 +632,6 @@
       <button class="btn-admin-secondary" onclick="fecharAdmin()">Cancelar</button>
     </div>
 
-    <!-- painel -->
     <div class="admin-section" id="secPainel">
       <p class="admin-title">Gerir Lista</p>
       <p class="admin-sub">Abra ou feche o registo de presenças em tempo real para todos os alunos.</p>
@@ -664,34 +658,30 @@
   // ═══════════════════════════════════════
   //  CONFIGURAÇÕES — edite estas linhas
   // ═══════════════════════════════════════
-  const SHEETDB_URL = 'https://sheetdb.io/api/v1/ez3gssl2tczv8'; // ← o seu endpoint SheetDB
-  const ADMIN_SENHA = 'enfermagem2025';                          // ← mude para uma palavra-passe sua
-  const EVENTO_LAT  = -22.1330694;
-  const EVENTO_LNG  = -51.4028245;
+  // COLOQUE A URL GERADA NO APPS SCRIPT AQUI DENTRO DAS ASPAS:
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbxghyKUM-hlVjU-35zxaogPum_DO42TMCRyXw5F66HFieCuq-7CuEOg1zJQkqroNLF8/exec';
+  
+  const ADMIN_SENHA = 'enfermagem2025';                          
+  const EVENTO_LAT  = -22.1330694; // Coordenadas do evento
+  const EVENTO_LNG  = -51.4028245; 
   const RAIO_METROS = 200;
   const COOLDOWN_MS = 60 * 60 * 1000; // 1 hora
 
-  // ═══════════════════════════════════════
-  //  DATA
   // ═══════════════════════════════════════
   document.getElementById('dataHoje').textContent = new Date().toLocaleDateString('pt-PT', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
   });
 
-  // ═══════════════════════════════════════
-  //  ESTADO DA LISTA (aberta / fechada)
-  //  Usa uma linha especial na folha de cálculo:
-  //    nome = __status__  |  ra = aberta  (ou fechada)
-  // ═══════════════════════════════════════
   let listaAberta = true;
 
   async function verificarStatusLista() {
     try {
-      const r = await fetch(SHEETDB_URL + '/search?nome=__status__');
+      const r = await fetch(GAS_URL + '?action=getStatus');
       const dados = await r.json();
-      listaAberta = (!dados || dados.length === 0 || dados[0].ra === 'aberta');
-    } catch {
-      listaAberta = true; // em caso de erro de rede, não bloqueia o aluno
+      listaAberta = (dados.status === 'aberta');
+    } catch (e) {
+      console.log("Erro ao checar status. Padrão: aberta.", e);
+      listaAberta = true; 
     }
     aplicarStatusLista();
   }
@@ -714,9 +704,6 @@
 
   verificarStatusLista();
 
-  // ═══════════════════════════════════════
-  //  AJUDANTES (HELPERS)
-  // ═══════════════════════════════════════
   function showStatus(msg, tipo) {
     const el = document.getElementById('statusMsg');
     el.textContent = msg;
@@ -752,9 +739,6 @@
     localStorage.setItem('ultimo_registro', Date.now().toString());
   }
 
-  // ═══════════════════════════════════════
-  //  REGISTO DE PRESENÇA
-  // ═══════════════════════════════════════
   async function registrarPresenca() {
     const nome    = document.getElementById('nome').value.trim();
     const ra      = document.getElementById('ra').value.trim();
@@ -795,21 +779,27 @@
         showStatus('📤 A enviar dados…', 'info');
 
         try {
-          const resp = await fetch(SHEETDB_URL, {
+          // Envia usando text/plain para contornar bloqueios de preflight CORS
+          const resp = await fetch(GAS_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: {
-              nome,
-              ra,
-              termo:     periodo,
-              data_hora: new Date().toLocaleString('pt-PT'),
-              latitude:  latitude.toFixed(6),
-              longitude: longitude.toFixed(6),
-              device_id: getDeviceId()
-            }})
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ 
+              action: 'register',
+              data: {
+                nome,
+                ra,
+                termo:     periodo,
+                data_hora: new Date().toLocaleString('pt-PT'),
+                latitude:  latitude.toFixed(6),
+                longitude: longitude.toFixed(6),
+                device_id: getDeviceId()
+              }
+            })
           });
 
-          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          const result = await resp.json();
+
+          if (!result.success) throw new Error(result.error || 'Erro desconhecido');
 
           salvarCooldown();
           showStatus('✅ Presença registada com sucesso! Obrigado/a, ' + nome.split(' ')[0] + '.', 'success');
@@ -838,9 +828,7 @@
     );
   }
 
-  // ═══════════════════════════════════════
-  //  ADMINISTRAÇÃO
-  // ═══════════════════════════════════════
+  // Administração
   function mostrarSecao(id) {
     document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -882,9 +870,9 @@
     label.innerHTML = '<span class="status-badge loading">A carregar…</span>';
 
     try {
-      const r = await fetch(SHEETDB_URL + '/search?nome=__status__');
+      const r = await fetch(GAS_URL + '?action=getStatus');
       const dados = await r.json();
-      const aberta = !dados || dados.length === 0 || dados[0].ra === 'aberta';
+      const aberta = (dados.status === 'aberta');
       toggle.checked  = aberta;
       toggle.disabled = false;
       atualizarBadge(aberta);
@@ -907,27 +895,17 @@
     saving.textContent = 'A guardar…';
 
     try {
-      // verifica se a linha de controlo já existe
-      const r    = await fetch(SHEETDB_URL + '/search?nome=__status__');
-      const rows = await r.json();
+      const r = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'setStatus',
+          status: aberta ? 'aberta' : 'fechada'
+        })
+      });
 
-      if (rows && rows.length > 0) {
-        await fetch(SHEETDB_URL + '/nome/__status__', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ data: { ra: aberta ? 'aberta' : 'fechada' } })
-        });
-      } else {
-        await fetch(SHEETDB_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ data: {
-            nome: '__status__', ra: aberta ? 'aberta' : 'fechada',
-            termo: '', data_hora: new Date().toLocaleString('pt-PT'),
-            latitude: '', longitude: '', device_id: 'controle'
-          }})
-        });
-      }
+      const result = await r.json();
+      if (!result.success) throw new Error(result.error);
 
       listaAberta = aberta;
       aplicarStatusLista();
@@ -937,7 +915,7 @@
 
     } catch (err) {
       saving.textContent = '❌ Erro ao guardar. Tente novamente.';
-      toggle.checked = !aberta; // reverte o toggle visualmente
+      toggle.checked = !aberta; // reverte visualmente
       console.error(err);
     }
 
@@ -947,5 +925,3 @@
 
 </body>
 </html>
-
-```
