@@ -7,332 +7,550 @@
   <title>Semana da Enfermagem – Registro de Presença</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --green-deep: #0a4a3a;
-      --green-mid: #1a7a5e;
-      --green-light: #2aaa82;
-      --cream: #f5f0e8;
-      --cream-dark: #e8e0d0;
-      --white: #ffffff;
-      --text-dark: #1a1a1a;
-      --text-muted: #5a6a62;
-      --error: #c0392b;
-      --success: #1a7a5e;
-      --gold: #c9a84c;
-    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 ```
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+:root {
+  --green-deep:  #0a4a3a;
+  --green-mid:   #1a7a5e;
+  --green-light: #2aaa82;
+  --cream:       #f5f0e8;
+  --cream-dark:  #e0d8cc;
+  --white:       #ffffff;
+  --text-dark:   #1c2420;
+  --text-muted:  #5a6a62;
+  --error:       #b83030;
+  --success:     #1a7a5e;
+  --gold:        #c9a84c;
+  --gold-light:  #e8c96a;
 }
+
+html { font-size: 16px; }
 
 body {
-  background-color: var(--green-deep);
   font-family: 'DM Sans', sans-serif;
+  background-color: var(--green-deep);
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow-x: hidden;
+  padding: 32px 16px;
   position: relative;
+  overflow-x: hidden;
 }
 
-/* Background texture */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image:
-    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(42,170,130,0.18) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 80% at 80% 90%, rgba(26,122,94,0.15) 0%, transparent 60%);
+  background:
+    radial-gradient(ellipse 80% 55% at 15% 5%,  rgba(42,170,130,.16) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 75% at 85% 95%, rgba(26,122,94,.13)  0%, transparent 65%);
   pointer-events: none;
+  z-index: 0;
 }
 
-/* Decorative cross pattern */
 body::after {
   content: '';
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  inset: 0;
   background-image:
-    repeating-linear-gradient(0deg, transparent, transparent 48px, rgba(255,255,255,0.03) 48px, rgba(255,255,255,0.03) 50px),
-    repeating-linear-gradient(90deg, transparent, transparent 48px, rgba(255,255,255,0.03) 48px, rgba(255,255,255,0.03) 50px);
+    repeating-linear-gradient(0deg,   transparent, transparent 47px, rgba(255,255,255,.025) 47px, rgba(255,255,255,.025) 48px),
+    repeating-linear-gradient(90deg,  transparent, transparent 47px, rgba(255,255,255,.025) 47px, rgba(255,255,255,.025) 48px);
   pointer-events: none;
+  z-index: 0;
 }
 
 .page-wrapper {
-  width: 100%;
-  max-width: 520px;
-  padding: 24px 16px;
   position: relative;
   z-index: 1;
-  animation: fadeUp 0.7s ease both;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  animation: fadeUp .65s ease both;
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(28px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0);    }
 }
 
-/* ── Header ── */
+/* ── header ── */
 .header {
   text-align: center;
-  margin-bottom: 32px;
+  padding-bottom: 28px;
 }
 
 .cross-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
+  width: 54px;
+  height: 54px;
   background: var(--gold);
-  border-radius: 14px;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 20px rgba(201,168,76,0.4);
-  animation: pulse 3s ease-in-out infinite;
+  border-radius: 15px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 22px rgba(201,168,76,.45);
+  animation: glow 3s ease-in-out infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 4px 20px rgba(201,168,76,0.4); }
-  50%       { box-shadow: 0 4px 32px rgba(201,168,76,0.7); }
+@keyframes glow {
+  0%,100% { box-shadow: 0 4px 22px rgba(201,168,76,.45); }
+  50%      { box-shadow: 0 4px 36px rgba(201,168,76,.75); }
 }
 
-.cross-icon svg {
-  width: 28px;
-  height: 28px;
-  fill: var(--green-deep);
-}
+.cross-icon svg { width: 28px; height: 28px; fill: var(--green-deep); }
 
 .event-title {
   font-family: 'Playfair Display', serif;
-  font-size: 2rem;
+  font-size: 2.1rem;
   font-weight: 700;
   color: var(--cream);
-  letter-spacing: -0.5px;
   line-height: 1.15;
-  margin-bottom: 6px;
+  letter-spacing: -.4px;
+  margin-bottom: 8px;
 }
 
-.event-title span {
-  color: var(--gold);
-}
+.event-title em { color: var(--gold-light); font-style: normal; }
 
 .event-date {
-  font-size: 0.82rem;
+  font-size: .75rem;
   font-weight: 500;
-  letter-spacing: 2.5px;
+  letter-spacing: 2.2px;
   text-transform: uppercase;
-  color: rgba(245,240,232,0.55);
-  margin-top: 4px;
+  color: rgba(245,240,232,.5);
 }
 
-/* ── Card ── */
+/* ── card ── */
 .card {
   background: var(--cream);
-  border-radius: 24px;
-  padding: 36px 32px 32px;
-  box-shadow:
-    0 2px 0 rgba(255,255,255,0.12) inset,
-    0 24px 60px rgba(0,0,0,0.35);
+  border-radius: 22px;
+  padding: 34px 30px 30px;
+  box-shadow: 0 28px 64px rgba(0,0,0,.38), 0 2px 0 rgba(255,255,255,.1) inset;
 }
 
 .card-heading {
   font-family: 'Playfair Display', serif;
-  font-size: 1.35rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: var(--green-deep);
   margin-bottom: 4px;
 }
 
 .card-sub {
-  font-size: 0.82rem;
+  font-size: .8rem;
   color: var(--text-muted);
-  margin-bottom: 28px;
-  font-weight: 400;
+  margin-bottom: 26px;
+  line-height: 1.5;
 }
 
-/* ── Form ── */
-.form-group {
-  margin-bottom: 18px;
+/* ── closed banner ── */
+.closed-banner {
+  display: none;
+  background: rgba(184,48,48,.09);
+  border: 1.5px solid rgba(184,48,48,.28);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 22px;
+  text-align: center;
 }
 
-label {
-  display: block;
-  font-size: 0.78rem;
+.closed-banner .cb-icon { font-size: 1.6rem; margin-bottom: 6px; }
+
+.closed-banner p {
+  font-size: .84rem;
   font-weight: 600;
-  letter-spacing: 1px;
+  color: var(--error);
+  line-height: 1.45;
+}
+
+.closed-banner p span {
+  display: block;
+  font-size: .75rem;
+  font-weight: 400;
+  color: #8a4040;
+  margin-top: 3px;
+}
+
+/* ── form groups ── */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: 1.1px;
   text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: 7px;
 }
 
-input[type="text"] {
+.form-group input[type="text"] {
+  display: block;
   width: 100%;
-  padding: 13px 16px;
+  padding: 12px 15px;
   border: 2px solid var(--cream-dark);
-  border-radius: 12px;
+  border-radius: 11px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.97rem;
+  font-size: .95rem;
   color: var(--text-dark);
   background: var(--white);
-  transition: border-color 0.2s, box-shadow 0.2s;
   outline: none;
+  transition: border-color .18s, box-shadow .18s;
 }
 
-input[type="text"]:focus {
+.form-group input[type="text"]:focus {
   border-color: var(--green-light);
-  box-shadow: 0 0 0 3px rgba(42,170,130,0.15);
+  box-shadow: 0 0 0 3px rgba(42,170,130,.14);
 }
 
-input[type="text"]::placeholder {
-  color: #b0bdb8;
+.form-group input[type="text"]::placeholder { color: #b8c2bc; }
+
+.form-group input[type="text"]:disabled {
+  background: #f0ece4;
+  cursor: not-allowed;
+  opacity: .7;
 }
 
-/* ── Termo ── */
-.termo-box {
-  background: rgba(26,122,94,0.07);
-  border: 1.5px solid rgba(26,122,94,0.2);
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-bottom: 8px;
+/* ── aceite box ── */
+.aceite-box {
+  background: rgba(26,122,94,.07);
+  border: 1.5px solid rgba(26,122,94,.18);
+  border-radius: 11px;
+  padding: 13px 15px;
+  margin-bottom: 10px;
 }
 
-.termo-box p {
-  font-size: 0.78rem;
+.aceite-box p {
+  font-size: .77rem;
   color: var(--text-muted);
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
-.termo-check {
+.aceite-check {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  margin-bottom: 22px;
-  margin-top: 10px;
-  cursor: pointer;
+  margin-bottom: 20px;
+  margin-top: 9px;
 }
 
-.termo-check input[type="checkbox"] {
+.aceite-check input[type="checkbox"] {
   width: 18px;
   height: 18px;
   min-width: 18px;
+  margin-top: 2px;
   accent-color: var(--green-mid);
   cursor: pointer;
-  margin-top: 1px;
+  flex-shrink: 0;
 }
 
-.termo-check span {
-  font-size: 0.8rem;
+.aceite-check input[type="checkbox"]:disabled { cursor: not-allowed; opacity: .55; }
+
+.aceite-check span {
+  font-size: .79rem;
   color: var(--text-muted);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
-/* ── Button ── */
+/* ── button ── */
 .btn-registrar {
+  display: block;
   width: 100%;
-  padding: 15px;
+  padding: 14px 20px;
   background: var(--green-deep);
   color: var(--cream);
   border: none;
-  border-radius: 12px;
+  border-radius: 11px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 1rem;
+  font-size: .97rem;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: .4px;
   cursor: pointer;
-  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
   position: relative;
   overflow: hidden;
+  transition: background .2s, transform .13s, box-shadow .2s;
 }
 
 .btn-registrar::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.07), transparent);
+  background: linear-gradient(135deg, rgba(255,255,255,.07), transparent);
+  pointer-events: none;
 }
 
 .btn-registrar:hover:not(:disabled) {
   background: var(--green-mid);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(26,122,94,0.4);
+  box-shadow: 0 6px 22px rgba(26,122,94,.4);
 }
 
-.btn-registrar:active:not(:disabled) {
-  transform: translateY(0);
-}
+.btn-registrar:active:not(:disabled) { transform: translateY(0); }
 
 .btn-registrar:disabled {
-  opacity: 0.65;
+  opacity: .55;
   cursor: not-allowed;
 }
 
-/* ── Status messages ── */
+/* ── status ── */
 .status {
-  margin-top: 16px;
-  padding: 13px 16px;
+  margin-top: 14px;
+  padding: 12px 15px;
   border-radius: 10px;
-  font-size: 0.85rem;
+  font-size: .83rem;
   font-weight: 500;
-  display: none;
   line-height: 1.5;
+  display: none;
 }
 
-.status.error {
-  background: rgba(192,57,43,0.1);
-  border: 1.5px solid rgba(192,57,43,0.3);
-  color: var(--error);
-  display: block;
-}
+.status.error   { display: block; background: rgba(184,48,48,.09);  border: 1.5px solid rgba(184,48,48,.28); color: var(--error);   }
+.status.success { display: block; background: rgba(26,122,94,.1);   border: 1.5px solid rgba(26,122,94,.3);  color: var(--success); }
+.status.info    { display: block; background: rgba(201,168,76,.1);  border: 1.5px solid rgba(201,168,76,.3); color: #7a5e10;        }
 
-.status.success {
-  background: rgba(26,122,94,0.1);
-  border: 1.5px solid rgba(26,122,94,0.3);
-  color: var(--success);
-  display: block;
-}
-
-.status.info {
-  background: rgba(201,168,76,0.1);
-  border: 1.5px solid rgba(201,168,76,0.35);
-  color: #7a5e10;
-  display: block;
-}
-
-/* ── Loader ── */
+/* ── loader ── */
 .loader {
   display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(245,240,232,0.4);
+  width: 15px; height: 15px;
+  border: 2px solid rgba(245,240,232,.35);
   border-top-color: var(--cream);
   border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+  animation: spin .65s linear infinite;
   vertical-align: middle;
   margin-right: 6px;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── Footer ── */
+/* ── footer ── */
 .footer {
   text-align: center;
-  margin-top: 20px;
-  font-size: 0.72rem;
-  color: rgba(245,240,232,0.3);
-  letter-spacing: 0.5px;
+  padding-top: 18px;
+  font-size: .7rem;
+  color: rgba(245,240,232,.28);
+  letter-spacing: .5px;
 }
 
-@media (max-width: 420px) {
-  .card { padding: 28px 20px 24px; }
-  .event-title { font-size: 1.65rem; }
+.footer a {
+  color: rgba(245,240,232,.35);
+  text-decoration: none;
+  margin-left: 10px;
+  font-size: .75rem;
+  transition: color .15s;
+}
+
+.footer a:hover { color: rgba(245,240,232,.65); }
+
+/* ═══════════════════════════════
+   ADMIN OVERLAY
+═══════════════════════════════ */
+.admin-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(5,25,18,.82);
+  backdrop-filter: blur(6px);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.admin-overlay.open { display: flex; animation: fadeIn .2s ease; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.admin-card {
+  background: var(--cream);
+  border-radius: 20px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 32px 72px rgba(0,0,0,.5);
+  animation: scaleIn .22s ease;
+}
+
+@keyframes scaleIn { from { transform: scale(.93); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.admin-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--green-deep);
+  margin-bottom: 4px;
+}
+
+.admin-sub {
+  font-size: .78rem;
+  color: var(--text-muted);
+  margin-bottom: 22px;
+  line-height: 1.5;
+}
+
+.admin-section { display: none; }
+.admin-section.active { display: block; }
+
+.admin-input-group { margin-bottom: 14px; }
+
+.admin-input-group label {
+  display: block;
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.admin-input-group input {
+  display: block;
+  width: 100%;
+  padding: 11px 14px;
+  border: 2px solid var(--cream-dark);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .93rem;
+  color: var(--text-dark);
+  background: var(--white);
+  outline: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+
+.admin-input-group input:focus {
+  border-color: var(--green-light);
+  box-shadow: 0 0 0 3px rgba(42,170,130,.14);
+}
+
+.btn-admin-login {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: var(--green-deep);
+  color: var(--cream);
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .93rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+  margin-bottom: 10px;
+}
+
+.btn-admin-login:hover { background: var(--green-mid); }
+
+.admin-err {
+  font-size: .78rem;
+  color: var(--error);
+  margin-bottom: 10px;
+  display: none;
+}
+
+/* toggle */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: rgba(26,122,94,.07);
+  border: 1.5px solid rgba(26,122,94,.18);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 18px;
+}
+
+.toggle-info { flex: 1; min-width: 0; }
+
+.toggle-info strong {
+  display: block;
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: .69rem;
+  font-weight: 600;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+.status-badge.open   { background: rgba(26,122,94,.12); color: var(--green-mid); }
+.status-badge.closed { background: rgba(184,48,48,.1);  color: var(--error);     }
+.status-badge.loading { background: rgba(0,0,0,.06);    color: var(--text-muted);}
+
+.toggle-switch {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  background: #c8bfb0;
+  cursor: pointer;
+  transition: background .25s;
+}
+
+.toggle-track::after {
+  content: '';
+  position: absolute;
+  width: 22px; height: 22px;
+  left: 3px; top: 3px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,.25);
+  transition: transform .25s;
+}
+
+.toggle-switch input:checked + .toggle-track { background: var(--green-mid); }
+.toggle-switch input:checked + .toggle-track::after { transform: translateX(24px); }
+.toggle-switch input:disabled + .toggle-track { opacity: .55; cursor: not-allowed; }
+
+.admin-saving {
+  font-size: .75rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 12px;
+  min-height: 18px;
+}
+
+.btn-admin-secondary {
+  display: block;
+  width: 100%;
+  padding: 11px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1.5px solid var(--cream-dark);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .18s, border-color .18s;
+}
+
+.btn-admin-secondary:hover { background: var(--cream-dark); }
+
+@media (max-width: 400px) {
+  .card { padding: 26px 18px 22px; }
+  .event-title { font-size: 1.75rem; }
+  .admin-card { padding: 26px 20px; }
 }
 ```
 
@@ -340,27 +558,31 @@ input[type="text"]::placeholder {
 </head>
 <body>
 
-<div class="page-wrapper">
+<!-- ════════════════ PAGE ════════════════ -->
 
-  <!-- Header -->
+<div class="page-wrapper">
 
   <div class="header">
     <div class="cross-icon">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M19 11h-6V5a1 1 0 0 0-2 0v6H5a1 1 0 0 0 0 2h6v6a1 1 0 0 0 2 0v-6h6a1 1 0 0 0 0-2z"/>
-      </svg>
+      <svg viewBox="0 0 24 24"><path d="M19 11h-6V5a1 1 0 0 0-2 0v6H5a1 1 0 0 0 0 2h6v6a1 1 0 0 0 2 0v-6h6a1 1 0 0 0 0-2z"/></svg>
     </div>
-    <h1 class="event-title">Semana da<br /><span>Enfermagem</span></h1>
+    <h1 class="event-title">Semana da<br /><em>Enfermagem</em></h1>
     <p class="event-date" id="dataHoje"></p>
   </div>
-
-  <!-- Card -->
 
   <div class="card">
     <h2 class="card-heading">Registrar Presença</h2>
     <p class="card-sub">Preencha os campos abaixo para confirmar sua presença no evento.</p>
 
 ```
+<div class="closed-banner" id="closedBanner">
+  <div class="cb-icon">🔒</div>
+  <p>
+    A lista de presença está fechada no momento.
+    <span>Aguarde a abertura pelo responsável do evento.</span>
+  </p>
+</div>
+
 <div class="form-group">
   <label for="nome">Nome Completo</label>
   <input type="text" id="nome" placeholder="Seu nome completo" autocomplete="name" />
@@ -368,22 +590,20 @@ input[type="text"]::placeholder {
 
 <div class="form-group">
   <label for="ra">RA Acadêmico</label>
-  <input type="text" id="ra" placeholder="Ex: 123456" autocomplete="off" />
+  <input type="text" id="ra" placeholder="Ex: 123456" autocomplete="off" inputmode="numeric" />
 </div>
 
 <div class="form-group">
-  <label for="periodo">Termo</label>
+  <label for="periodo">Termo que está cursando</label>
   <input type="text" id="periodo" placeholder="Ex: 4º Termo" autocomplete="off" />
 </div>
 
-<div class="termo-box">
-  <p>
-    Ao registrar sua presença, confirmo que estou <strong>fisicamente presente</strong> no local do evento e autorizo o armazenamento dos meus dados (nome e RA) para fins de controle acadêmico de frequência.
-  </p>
+<div class="aceite-box">
+  <p>Ao registrar sua presença, confirmo que estou <strong>fisicamente presente</strong> no local do evento e autorizo o uso dos meus dados (nome e RA) para fins de controle acadêmico de frequência.</p>
 </div>
 
-<label class="termo-check">
-  <input type="checkbox" id="termo" />
+<label class="aceite-check">
+  <input type="checkbox" id="aceite" />
   <span>Li e aceito os termos acima e confirmo minha presença no local.</span>
 </label>
 
@@ -396,24 +616,115 @@ input[type="text"]::placeholder {
 
   </div>
 
-  <p class="footer">Controle de presença · Semana da Enfermagem</p>
+  <p class="footer">
+    Controle de presença · Semana da Enfermagem
+    <a href="#" onclick="abrirAdmin(event)" title="Administrador">⚙</a>
+  </p>
+</div>
+
+<!-- ════════════════ ADMIN ════════════════ -->
+
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-card">
+
+```
+<!-- login -->
+<div class="admin-section active" id="secLogin">
+  <p class="admin-title">Área do Administrador</p>
+  <p class="admin-sub">Entre com a senha para gerenciar a lista de presença.</p>
+
+  <div class="admin-input-group">
+    <label for="adminSenha">Senha</label>
+    <input type="password" id="adminSenha" placeholder="••••••••"
+           onkeydown="if(event.key==='Enter') fazerLogin()" />
+  </div>
+
+  <p class="admin-err" id="adminErr">Senha incorreta. Tente novamente.</p>
+  <button class="btn-admin-login" onclick="fazerLogin()">Entrar</button>
+  <button class="btn-admin-secondary" onclick="fecharAdmin()">Cancelar</button>
+</div>
+
+<!-- painel -->
+<div class="admin-section" id="secPainel">
+  <p class="admin-title">Gerenciar Lista</p>
+  <p class="admin-sub">Abra ou feche o registro de presença em tempo real para todos os alunos.</p>
+
+  <div class="toggle-row">
+    <div class="toggle-info">
+      <strong>Lista de presença</strong>
+      <span id="statusLabel"><span class="status-badge loading">Carregando…</span></span>
+    </div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="toggleLista" onchange="alternarLista()" disabled />
+      <span class="toggle-track"></span>
+    </label>
+  </div>
+
+  <p class="admin-saving" id="adminSaving"></p>
+  <button class="btn-admin-secondary" onclick="fecharAdmin()">Fechar painel</button>
+</div>
+```
+
+  </div>
 </div>
 
 <script>
-  // ── Configurações ──────────────────────────────────────────
-  const SHEETDB_URL = 'https://sheetdb.io/api/v1/ez3gssl2tczv8'; // ← substitua pelo seu endpoint SheetDB
+  // ═══════════════════════════════════════
+  //  CONFIGURAÇÕES — edite estas linhas
+  // ═══════════════════════════════════════
+  const SHEETDB_URL = 'https://sheetdb.io/api/v1/ez3gssl2tczv8'; // ← seu endpoint SheetDB
+  const ADMIN_SENHA = 'enfermagem2025';                          // ← troque por uma senha sua
   const EVENTO_LAT  = -22.1330694;
   const EVENTO_LNG  = -51.4028245;
-  const RAIO_METROS = 200;       // raio permitido em metros
-  const COOLDOWN_MS = 60 * 60 * 1000; // 1 hora em ms
+  const RAIO_METROS = 200;
+  const COOLDOWN_MS = 60 * 60 * 1000; // 1 hora
 
-  // ── Data de hoje ──────────────────────────────────────────
-  const dataHoje = new Date().toLocaleDateString('pt-BR', {
+  // ═══════════════════════════════════════
+  //  DATA
+  // ═══════════════════════════════════════
+  document.getElementById('dataHoje').textContent = new Date().toLocaleDateString('pt-BR', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
   });
-  document.getElementById('dataHoje').textContent = dataHoje;
 
-  // ── Helpers ───────────────────────────────────────────────
+  // ═══════════════════════════════════════
+  //  STATUS DA LISTA (aberta / fechada)
+  //  Usa uma linha especial na planilha:
+  //    nome = __status__  |  ra = aberta  (ou fechada)
+  // ═══════════════════════════════════════
+  let listaAberta = true;
+
+  async function verificarStatusLista() {
+    try {
+      const r = await fetch(SHEETDB_URL + '/search?nome=__status__');
+      const dados = await r.json();
+      listaAberta = (!dados || dados.length === 0 || dados[0].ra === 'aberta');
+    } catch {
+      listaAberta = true; // em caso de erro de rede, não bloqueia o aluno
+    }
+    aplicarStatusLista();
+  }
+
+  function aplicarStatusLista() {
+    const banner = document.getElementById('closedBanner');
+    const btn    = document.getElementById('btnRegistrar');
+    const inputs = document.querySelectorAll('.form-group input[type="text"], #aceite');
+
+    if (listaAberta) {
+      banner.style.display = 'none';
+      btn.disabled = false;
+      inputs.forEach(i => { i.disabled = false; });
+    } else {
+      banner.style.display = 'block';
+      btn.disabled = true;
+      inputs.forEach(i => { i.disabled = true; });
+    }
+  }
+
+  verificarStatusLista();
+
+  // ═══════════════════════════════════════
+  //  HELPERS
+  // ═══════════════════════════════════════
   function showStatus(msg, tipo) {
     const el = document.getElementById('statusMsg');
     el.textContent = msg;
@@ -421,78 +732,61 @@ input[type="text"]::placeholder {
   }
 
   function calcDistancia(lat1, lng1, lat2, lng2) {
-    const R = 6371000; // raio da Terra em metros
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLng = (lng2 - lng1) * Math.PI / 180;
-    const a = Math.sin(dLat/2)**2 +
-              Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
-              Math.sin(dLng/2)**2;
+    const R = 6371000;
+    const toRad = x => x * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const a = Math.sin(dLat/2)**2
+            + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng/2)**2;
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   }
 
   function getDeviceId() {
     let id = localStorage.getItem('device_id');
-    if (!id) {
-      id = 'dev_' + Math.random().toString(36).slice(2) + Date.now();
-      localStorage.setItem('device_id', id);
-    }
+    if (!id) { id = 'dev_' + Math.random().toString(36).slice(2) + Date.now(); localStorage.setItem('device_id', id); }
     return id;
   }
 
-  // Cooldown por DISPOSITIVO — bloqueia o aparelho por 1h independente do RA digitado
-  function verificarCooldownDispositivo() {
-    const ultimo = localStorage.getItem('ultimo_registro_dispositivo');
-    if (!ultimo) return false;
-    return (Date.now() - parseInt(ultimo)) < COOLDOWN_MS;
+  function verificarCooldown() {
+    const u = localStorage.getItem('ultimo_registro');
+    return u && (Date.now() - parseInt(u)) < COOLDOWN_MS;
   }
 
-  function getCooldownRestante() {
-    const ultimo = parseInt(localStorage.getItem('ultimo_registro_dispositivo') || '0');
-    const restante = COOLDOWN_MS - (Date.now() - ultimo);
-    const min = Math.ceil(restante / 60000);
-    return min;
+  function minRestantes() {
+    return Math.ceil((COOLDOWN_MS - (Date.now() - parseInt(localStorage.getItem('ultimo_registro')||'0'))) / 60000);
   }
 
-  function salvarCooldownDispositivo() {
-    localStorage.setItem('ultimo_registro_dispositivo', Date.now().toString());
+  function salvarCooldown() {
+    localStorage.setItem('ultimo_registro', Date.now().toString());
   }
 
-  // ── Registro ─────────────────────────────────────────────
+  // ═══════════════════════════════════════
+  //  REGISTRO DE PRESENÇA
+  // ═══════════════════════════════════════
   async function registrarPresenca() {
     const nome    = document.getElementById('nome').value.trim();
     const ra      = document.getElementById('ra').value.trim();
     const periodo = document.getElementById('periodo').value.trim();
-    const termo   = document.getElementById('termo').checked;
+    const aceite  = document.getElementById('aceite').checked;
     const btn     = document.getElementById('btnRegistrar');
 
-    // Validações básicas
     if (!nome || !ra || !periodo) {
-      showStatus('⚠️ Preencha todos os campos antes de continuar.', 'error');
-      return;
+      showStatus('⚠️ Preencha todos os campos antes de continuar.', 'error'); return;
     }
-    if (!termo) {
-      showStatus('⚠️ Você precisa aceitar o termo de presença.', 'error');
-      return;
+    if (!aceite) {
+      showStatus('⚠️ Você precisa aceitar o termo de presença.', 'error'); return;
     }
-
-    // Cooldown por DISPOSITIVO
-    if (verificarCooldownDispositivo()) {
-      const min = getCooldownRestante();
-      showStatus(`⏳ Este dispositivo já registrou uma presença recentemente. Aguarde aproximadamente ${min} minuto(s) para tentar novamente.`, 'error');
-      return;
+    if (verificarCooldown()) {
+      showStatus(`⏳ Este dispositivo já registrou uma presença recentemente. Aguarde cerca de ${minRestantes()} min para tentar novamente.`, 'error'); return;
     }
 
-    // UI: loading
     btn.disabled = true;
     btn.innerHTML = '<span class="loader"></span> Verificando localização…';
     showStatus('📍 Obtendo sua localização…', 'info');
 
-    // Geolocalização
     if (!navigator.geolocation) {
       showStatus('❌ Seu navegador não suporta geolocalização. Use outro dispositivo.', 'error');
-      btn.disabled = false;
-      btn.textContent = 'Confirmar Presença';
-      return;
+      btn.disabled = false; btn.textContent = 'Confirmar Presença'; return;
     }
 
     navigator.geolocation.getCurrentPosition(
@@ -501,64 +795,161 @@ input[type="text"]::placeholder {
         const dist = calcDistancia(latitude, longitude, EVENTO_LAT, EVENTO_LNG);
 
         if (dist > RAIO_METROS) {
-          showStatus(`❌ Você está a ${Math.round(dist)} m do local do evento. Presença permitida apenas dentro de ${RAIO_METROS} m.`, 'error');
-          btn.disabled = false;
-          btn.textContent = 'Confirmar Presença';
-          return;
+          showStatus(`❌ Você está a ${Math.round(dist)} m do local. Presença permitida apenas dentro de ${RAIO_METROS} m.`, 'error');
+          btn.disabled = false; btn.textContent = 'Confirmar Presença'; return;
         }
 
-        // Enviar para SheetDB
         btn.innerHTML = '<span class="loader"></span> Registrando…';
         showStatus('📤 Enviando dados…', 'info');
-
-        const agora = new Date().toLocaleString('pt-BR');
-        const deviceId = getDeviceId();
 
         try {
           const resp = await fetch(SHEETDB_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              data: {
-                nome:      nome,
-                ra:        ra,
-                termo:     periodo,
-                data_hora: agora,
-                latitude:  latitude.toFixed(6),
-                longitude: longitude.toFixed(6),
-                device_id: deviceId
-              }
-            })
+            body: JSON.stringify({ data: {
+              nome,
+              ra,
+              termo:     periodo,
+              data_hora: new Date().toLocaleString('pt-BR'),
+              latitude:  latitude.toFixed(6),
+              longitude: longitude.toFixed(6),
+              device_id: getDeviceId()
+            }})
           });
 
-          if (!resp.ok) throw new Error('Erro ao enviar dados: ' + resp.status);
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
 
-          salvarCooldownDispositivo();
+          salvarCooldown();
           showStatus('✅ Presença registrada com sucesso! Obrigado, ' + nome.split(' ')[0] + '.', 'success');
           document.getElementById('nome').value     = '';
           document.getElementById('ra').value       = '';
           document.getElementById('periodo').value  = '';
-          document.getElementById('termo').checked  = false;
+          document.getElementById('aceite').checked = false;
 
         } catch (err) {
           showStatus('❌ Falha ao registrar. Verifique sua conexão e tente novamente.', 'error');
           console.error(err);
         }
 
-        btn.disabled = false;
-        btn.textContent = 'Confirmar Presença';
+        btn.disabled = false; btn.textContent = 'Confirmar Presença';
       },
       (err) => {
-        let msg = '❌ Não foi possível obter sua localização.';
-        if (err.code === 1) msg = '❌ Permissão de localização negada. Ative o GPS e permita o acesso.';
-        if (err.code === 2) msg = '❌ Localização indisponível. Verifique o GPS do dispositivo.';
-        if (err.code === 3) msg = '❌ Tempo esgotado ao obter localização. Tente novamente.';
-        showStatus(msg, 'error');
-        btn.disabled = false;
-        btn.textContent = 'Confirmar Presença';
+        const msgs = {
+          1: '❌ Permissão de localização negada. Ative o GPS e permita o acesso.',
+          2: '❌ Localização indisponível. Verifique o GPS do dispositivo.',
+          3: '❌ Tempo esgotado ao obter localização. Tente novamente.'
+        };
+        showStatus(msgs[err.code] || '❌ Não foi possível obter sua localização.', 'error');
+        btn.disabled = false; btn.textContent = 'Confirmar Presença';
       },
       { timeout: 12000, maximumAge: 0, enableHighAccuracy: true }
     );
+  }
+
+  // ═══════════════════════════════════════
+  //  ADMIN
+  // ═══════════════════════════════════════
+  function mostrarSecao(id) {
+    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function abrirAdmin(e) {
+    e.preventDefault();
+    mostrarSecao('secLogin');
+    document.getElementById('adminErr').style.display = 'none';
+    document.getElementById('adminSenha').value = '';
+    document.getElementById('adminOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('adminSenha').focus(), 80);
+  }
+
+  function fecharAdmin() {
+    document.getElementById('adminOverlay').classList.remove('open');
+  }
+
+  document.getElementById('adminOverlay').addEventListener('click', function(e) {
+    if (e.target === this) fecharAdmin();
+  });
+
+  function fazerLogin() {
+    if (document.getElementById('adminSenha').value === ADMIN_SENHA) {
+      document.getElementById('adminErr').style.display = 'none';
+      mostrarSecao('secPainel');
+      carregarStatusAdmin();
+    } else {
+      document.getElementById('adminErr').style.display = 'block';
+      document.getElementById('adminSenha').value = '';
+      document.getElementById('adminSenha').focus();
+    }
+  }
+
+  async function carregarStatusAdmin() {
+    const toggle = document.getElementById('toggleLista');
+    const label  = document.getElementById('statusLabel');
+    toggle.disabled = true;
+    label.innerHTML = '<span class="status-badge loading">Carregando…</span>';
+
+    try {
+      const r = await fetch(SHEETDB_URL + '/search?nome=__status__');
+      const dados = await r.json();
+      const aberta = !dados || dados.length === 0 || dados[0].ra === 'aberta';
+      toggle.checked  = aberta;
+      toggle.disabled = false;
+      atualizarBadge(aberta);
+    } catch {
+      label.innerHTML = '<span class="status-badge loading">Erro ao carregar</span>';
+    }
+  }
+
+  function atualizarBadge(aberta) {
+    document.getElementById('statusLabel').innerHTML = aberta
+      ? '<span class="status-badge open">● Aberta</span>'
+      : '<span class="status-badge closed">● Fechada</span>';
+  }
+
+  async function alternarLista() {
+    const toggle  = document.getElementById('toggleLista');
+    const saving  = document.getElementById('adminSaving');
+    const aberta  = toggle.checked;
+    toggle.disabled = true;
+    saving.textContent = 'Salvando…';
+
+    try {
+      // verifica se linha de controle já existe
+      const r    = await fetch(SHEETDB_URL + '/search?nome=__status__');
+      const rows = await r.json();
+
+      if (rows && rows.length > 0) {
+        await fetch(SHEETDB_URL + '/nome/__status__', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: { ra: aberta ? 'aberta' : 'fechada' } })
+        });
+      } else {
+        await fetch(SHEETDB_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: {
+            nome: '__status__', ra: aberta ? 'aberta' : 'fechada',
+            termo: '', data_hora: new Date().toLocaleString('pt-BR'),
+            latitude: '', longitude: '', device_id: 'controle'
+          }})
+        });
+      }
+
+      listaAberta = aberta;
+      aplicarStatusLista();
+      atualizarBadge(aberta);
+      saving.textContent = aberta ? '✅ Lista aberta com sucesso.' : '🔒 Lista fechada com sucesso.';
+      setTimeout(() => { saving.textContent = ''; }, 3000);
+
+    } catch (err) {
+      saving.textContent = '❌ Erro ao salvar. Tente novamente.';
+      toggle.checked = !aberta; // reverte o toggle visualmente
+      console.error(err);
+    }
+
+    toggle.disabled = false;
   }
 </script>
 
